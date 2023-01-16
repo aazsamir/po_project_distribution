@@ -6,14 +6,16 @@ import com.Distribution.Input.InputCollection;
 import com.Distribution.Target.Target;
 import com.Distribution.Target.TargetCollection;
 
-/**
- * Hello world!
- *
- */
 public class App {
     public static void main(String[] args) {
-        Distribution distribution = new Distribution(mockTestTargetCollection(), mockTestInputCollection(100));
+        Distribution distribution = new Distribution(
+                mockTestTargetCollection(),
+                mockTestInputCollection(100));
+
+        System.out.println(distribution.calcAverageDeviation());
         distribution.distribute();
+        System.out.println("after distribute:");
+        System.out.println(distribution.calcAverageDeviation());
 
         System.out.println(distribution.toString());
     }
@@ -41,10 +43,19 @@ public class App {
     }
 
     private static Indicator mockTestIndicator() {
-        return new Indicator(getRandomDouble());
+        return new Indicator(
+                getRandomDouble(),
+                getRandomDouble(),
+                getRandomDouble(),
+                getRandomDouble(),
+                getRandomBoolean());
     }
 
     private static Double getRandomDouble() {
         return Math.pow(Math.random() * 10, 2);
+    }
+
+    private static Boolean getRandomBoolean() {
+        return Math.random() > 0.5;
     }
 }

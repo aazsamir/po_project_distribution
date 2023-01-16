@@ -14,6 +14,10 @@ public class TargetCollection {
         return this.targets;
     }
 
+    public int getSize() {
+        return this.targets.length;
+    }
+
     private void setTargets(Target[] targets) {
         this.targets = targets;
     }

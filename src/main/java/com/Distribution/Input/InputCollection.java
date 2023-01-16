@@ -1,6 +1,7 @@
 package com.Distribution.Input;
 
 import java.util.Vector;
+import java.util.function.Function;
 
 import com.Distribution.Indicator.Indicator;
 import com.Distribution.Indicator.IndicatorCollection;
@@ -60,17 +61,40 @@ public class InputCollection {
         this.inputs.remove(i);
     }
 
-    public Double getNormalizedValue(Double value) {
+    public Double getNormalizedRoughness(Double value) {
+        return this.getNormalizedValue(value, (indicator) -> indicator.getRoughness());
+    }
+
+    public Double getNormalizedTime(Double value) {
+        return this.getNormalizedValue(value, (indicator) -> indicator.getTime());
+    }
+
+    public Double getNormalizedCost(Double value) {
+        return this.getNormalizedValue(value, (indicator) -> indicator.getCost());
+    }
+
+    public Double getNormalizedPeople(Double value) {
+        return this.getNormalizedValue(value, (indicator) -> indicator.getPeople());
+    }
+
+    public Double getNormalizedSpecial(Double value) {
+        return this.getNormalizedValue(value, (indicator) -> indicator.isSpecial() ? 1.0 : 0.0);
+    }
+
+    private Double getNormalizedValue(Double value, Function<Indicator, Double> callback) {
         Double min = null;
         Double max = null;
+        Double indicatorValue;
 
         for (Input input : this.inputs) {
-            if (min == null || input.getIndicator().getValue() < min) {
-                min = input.getIndicator().getValue();
+            indicatorValue = callback.apply(input.getIndicator());
+
+            if (min == null || indicatorValue < min) {
+                min = indicatorValue;
             }
 
-            if (max == null || input.getIndicator().getValue() > max) {
-                max = input.getIndicator().getValue();
+            if (max == null || indicatorValue > max) {
+                max = indicatorValue;
             }
         }
 

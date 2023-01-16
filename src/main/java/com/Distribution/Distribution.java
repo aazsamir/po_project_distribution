@@ -4,6 +4,7 @@ import com.Distribution.Input.Input;
 import com.Distribution.Input.InputCollection;
 import com.Distribution.Target.Target;
 import com.Distribution.Target.TargetCollection;
+import com.Distribution.Utils.DoubleArray;
 
 public class Distribution {
     private TargetCollection targetCollection;
@@ -47,6 +48,47 @@ public class Distribution {
                 }
             }
         }
+    }
+
+    public Double calcAverageDeviation() {
+        Calculator tempCalculator = new Calculator(
+                new InputCollection(this.getAllInputs()),
+                this.targetCollection);
+
+        Double[] deviations = new Double[this.targetCollection.getSize()];
+        int deviationIndex = 0;
+
+        for (Target target : this.targetCollection.getTargets()) {
+            deviations[deviationIndex++] = tempCalculator.calculateDeviation(target);
+        }
+
+        return DoubleArray.getAverage(deviations);
+    }
+
+    private Input[] getAllInputs() {
+        Input[] inputs;
+        Target[] targets;
+        inputs = new Input[this.getAllInputCount()];
+        targets = this.targetCollection.getTargets();
+        int newInputCollectionAppendIndex = 0;
+
+        for (int i = 0; i < this.targetCollection.getSize(); i++) {
+            for (int j = 0; j < targets[i].getInputCollection().getSize(); j++) {
+                inputs[newInputCollectionAppendIndex++] = targets[i].getInputCollection().getInput(j);
+            }
+        }
+
+        return inputs;
+    }
+
+    private int getAllInputCount() {
+        int inputCount = 0;
+
+        for (Target target : this.targetCollection.getTargets()) {
+            inputCount += target.getInputCollection().getSize();
+        }
+
+        return inputCount;
     }
 
     public String toString() {

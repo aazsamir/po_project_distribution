@@ -14,6 +14,6 @@ public class Target {
     }
 
     public String toString() {
-        return "{\"inputCollection\": " + this.getInputCollection().toString() + ", \"score\": " + this.inputCollection.getAverageIndicator().getValue() + "}";
+        return "{\"inputCollection\": " + this.getInputCollection().toString() + "}";
     }
 }
