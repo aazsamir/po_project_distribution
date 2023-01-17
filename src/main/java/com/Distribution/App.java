@@ -1,13 +1,27 @@
 package com.Distribution;
 
+import java.sql.SQLException;
+
 import com.Distribution.Indicator.Indicator;
 import com.Distribution.Input.Input;
 import com.Distribution.Input.InputCollection;
+import com.Distribution.Repository.Database;
+import com.Distribution.Repository.Repository;
 import com.Distribution.Target.Target;
 import com.Distribution.Target.TargetCollection;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) {        
+        Repository repository = null;
+        
+        try {
+            repository = createRepository();
+            repository.migrate();
+        } catch (SQLException sqlException) {
+            System.out.println("migrate failed");
+            System.err.println(sqlException.getMessage());
+        }
+        
         Distribution distribution = new Distribution(
                 mockTestTargetCollection(),
                 mockTestInputCollection(100));
@@ -17,7 +31,18 @@ public class App {
         System.out.println("after distribute:");
         System.out.println(distribution.calcAverageDeviation());
 
-        System.out.println(distribution.toString());
+        // System.out.println(distribution.toString());
+
+        try {
+            repository.close();
+        } catch (SQLException sqlException) {
+            System.out.println("close failed");
+            System.err.println(sqlException.getMessage());
+        }
+    }
+
+    private static Repository createRepository() throws SQLException {
+        return new Repository(new Database());
     }
 
     private static TargetCollection mockTestTargetCollection() {

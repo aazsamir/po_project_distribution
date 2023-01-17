@@ -1,1 +1,4 @@
 .vscode
+sample.db
+target
+target/*
