@@ -10,6 +10,7 @@ import com.Distribution.Indicator.IndicatorCollection;
 
 public class Reader {
     private String filename;
+    private static final char SEPARATOR = ';';
 
     private static final int ROUGHNESS_INDEX = 0;
     private static final int TIME_INDEX = 1;
@@ -35,7 +36,7 @@ public class Reader {
                 continue;
             }
 
-            String[] datas = scanner.nextLine().split(";");
+            String[] datas = scanner.nextLine().split(String.valueOf(SEPARATOR));
 
             vectorIndicators.add(new Indicator(
                     Double.valueOf(datas[ROUGHNESS_INDEX]),
