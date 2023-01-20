@@ -11,8 +11,6 @@ public class Distribution {
     private InputCollection inputCollection;
     private Calculator calculator;
 
-    // public Distribution(TargetCollection targetCollection, InputCollection
-    // inputCollection, Calculator calculator) {
     public Distribution(TargetCollection targetCollection, InputCollection inputCollection) {
         this.targetCollection = targetCollection;
         this.inputCollection = inputCollection;

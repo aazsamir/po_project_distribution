@@ -13,6 +13,20 @@ public class InputCollection {
         this.setInputs(inputs);
     }
 
+    public InputCollection filterByTargetId(Integer idTarget) {
+        Input[] inputs = new Input[getSize()];
+        int i = 0;
+
+        for (Input input : getInputs()) {
+            if (input.getIdTarget() == idTarget) {
+                inputs[i] = input;
+                i++;
+            }
+        }
+
+        return new InputCollection(inputs);
+    }
+
     public Input[] getInputs() {
         Input[] inputs = new Input[this.inputs.size()];
 
@@ -31,7 +45,9 @@ public class InputCollection {
         this.inputs = new Vector<Input>();
 
         for (int i = 0; i < inputs.length; i++) {
-            this.inputs.add(inputs[i]);
+            if (inputs[i] != null) {
+                this.inputs.add(inputs[i]);
+            }
         }
     }
 
