@@ -11,7 +11,7 @@ public class Faker {
         Target[] targets = new Target[count];
 
         for (int i = 0; i < count; i++) {
-            targets[i] = new Target(i, "target" + i, mockTestInputCollection(1, i));
+            targets[i] = new Target(i, "target" + getRandomInt(), mockTestInputCollection(1, i));
         }
 
         return new TargetCollection(targets);
@@ -22,9 +22,9 @@ public class Faker {
 
         for (int i = 0; i < count; i++) {
             if (idTarget == null) {
-                inputs[i] = new Input(mockTestIndicator(), i);
+                inputs[i] = new Input(mockTestIndicator(), null);
             } else {
-                inputs[i] = new Input(mockTestIndicator(), i, idTarget);
+                inputs[i] = new Input(mockTestIndicator(), null, idTarget);
             }
         }
 
@@ -42,6 +42,10 @@ public class Faker {
 
     private Double getRandomDouble() {
         return Math.pow(Math.random() * 10, 2);
+    }
+
+    private int getRandomInt() {
+        return (int) (Math.random() * 100);
     }
 
     private Boolean getRandomBoolean() {

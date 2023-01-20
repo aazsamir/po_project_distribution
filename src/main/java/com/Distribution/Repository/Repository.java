@@ -21,6 +21,17 @@ public class Repository {
         this.faker = new Faker();
     }
 
+    public void migrateIfEmpty() throws SQLException {
+        boolean isEmpty = !(this.database.isTableExists("targets") && this.database.isTableExists("inputs"));
+
+        if (isEmpty) {
+            System.out.println("migrate!");
+            this.migrate();
+        }
+
+        return;
+    }
+
     public void migrate() throws SQLException {
         this.database.query("""
                     DROP TABLE IF EXISTS targets
@@ -51,14 +62,14 @@ public class Repository {
     }
 
     private void seed() throws SQLException {
-        TargetCollection targetCollection = this.faker.mockTestTargetCollection(5);
+        TargetCollection targetCollection = this.faker.mockTestTargetCollection(2);
         Target[] targets = targetCollection.getTargets();
 
         for (Target target : targets) {
-            updateTarget(target);
+            this.updateTarget(target);
 
             for (Input input : target.getInputCollection().getInputs()) {
-                updateInput(input);
+                this.updateInput(input);
             }
         }
     }
@@ -86,7 +97,7 @@ public class Repository {
     }
 
     public void updateInput(Input input) throws SQLException {
-        boolean isExists = this.database.select(String.format(Locale.US,
+        boolean isExists = input.getId() != null && this.database.select(String.format(Locale.US,
                 """
                             SELECT id FROM inputs WHERE id = %s
                         """,
@@ -148,22 +159,29 @@ public class Repository {
                         targets
                 """);
 
-        Target[] targets = new Target[getFetchSize(results)];
-        InputCollection temInputCollection;
+        Vector<Target> vectorTargets = new Vector<Target>();
+        InputCollection tempInputCollection;
 
         while (results.next()) {
-            temInputCollection = findInputsByIdTarget(results.getInt("id"));
-            targets[results.getRow() - 1] = new Target(
+            tempInputCollection = this.findInputsByIdTarget(results.getInt("id"));
+
+            vectorTargets.add(new Target(
                     results.getInt("id"),
                     results.getString("name"),
-                    temInputCollection);
+                    tempInputCollection));
+        }
+
+        Target[] targets = new Target[vectorTargets.size()];
+
+        for (int i = 0; i < vectorTargets.size(); i++) {
+            targets[i] = vectorTargets.elementAt(i);
         }
 
         return new TargetCollection(targets);
     }
 
     public InputCollection findInputsByIdTarget(Integer idTarget) throws SQLException {
-        ResultSet results = this.database.select(String.format(Locale.US,
+        ResultSet result = this.database.select(String.format(Locale.US,
                 """
                             SELECT
                                 id,
@@ -182,25 +200,28 @@ public class Repository {
 
         Vector<Input> inputsVector = new Vector<Input>();
         Indicator tempIndicator;
-        int i = 0;
 
-        while (results.next()) {
+        while (result.next()) {
             tempIndicator = new Indicator(
-                    results.getDouble("roughness"),
-                    results.getDouble("time"),
-                    results.getDouble("cost"),
-                    results.getDouble("people"),
-                    results.getBoolean("is_special"));
+                    result.getDouble("roughness"),
+                    result.getDouble("time"),
+                    result.getDouble("cost"),
+                    result.getDouble("people"),
+                    result.getBoolean("is_special"));
 
             inputsVector.add(new Input(
                     tempIndicator,
-                    results.getInt("id"),
-                    results.getInt("id_target")));
+                    result.getInt("id"),
+                    result.getInt("id_target")));
         }
 
-        Input[] inputs = inputsVector.toArray();
+        Input[] inputs = new Input[inputsVector.size()];
 
-        return new InputCollection(inputs.toArray());
+        for (int i = 0; i < inputsVector.size(); i++) {
+            inputs[i] = inputsVector.elementAt(i);
+        }
+
+        return new InputCollection(inputs);
     }
 
     public void close() throws SQLException {

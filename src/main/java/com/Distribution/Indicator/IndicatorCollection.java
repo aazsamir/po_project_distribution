@@ -7,6 +7,10 @@ public class IndicatorCollection {
         this.indicators = indicators;
     }
 
+    public Indicator[] getIndicators() {
+        return this.indicators;
+    }
+
     public Indicator getAverageIndicator() {
         Indicator averageIndicator = new Indicator();
         int specialTasks = 0;

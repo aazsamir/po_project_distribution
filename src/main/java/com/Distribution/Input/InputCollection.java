@@ -13,6 +13,18 @@ public class InputCollection {
         this.setInputs(inputs);
     }
 
+    public static InputCollection makeFromIndicatorCollection(IndicatorCollection indicatorCollection) {
+        Input[] inputs = new Input[indicatorCollection.getIndicators().length];
+
+        int i = 0;
+
+        for (Indicator indicator : indicatorCollection.getIndicators()) {
+            inputs[i++] = new Input(indicator);
+        }
+
+        return new InputCollection(inputs);
+    }
+
     public InputCollection filterByTargetId(Integer idTarget) {
         Input[] inputs = new Input[getSize()];
         int i = 0;

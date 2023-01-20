@@ -7,6 +7,12 @@ public class Input {
     private Integer idTarget;
     private Indicator indicator;
 
+    public Input(Indicator indicator) {
+        this.indicator = indicator;
+        this.id = null;
+        this.idTarget = null;
+    }
+
     public Input(Indicator indicator, Integer id) {
         this.setIndicator(indicator);
         this.id = id;
@@ -29,6 +35,10 @@ public class Input {
 
     public Integer getIdTarget() {
         return this.idTarget;
+    }
+
+    public void setIdTarget(Integer idTarget) {
+        this.idTarget = idTarget;
     }
 
     private void setIndicator(Indicator indicator) {

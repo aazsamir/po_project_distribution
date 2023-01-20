@@ -41,6 +41,7 @@ public class Distribution {
                 }
 
                 if (bestInput != null || bestInputIndex != null) {
+                    bestInput.setIdTarget(target.getId());
                     target.getInputCollection().addInput(bestInput);
                     this.inputCollection.remove(bestInputIndex);
                 }
