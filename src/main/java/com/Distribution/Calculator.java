@@ -12,8 +12,8 @@ public class Calculator {
     private TargetCollection targetCollection;
 
     public Calculator(InputCollection inputCollection, TargetCollection targetCollection) {
-        this.inputCollection = inputCollection;
         this.targetCollection = targetCollection;
+        this.inputCollection = InputCollection.merge(inputCollection, targetCollection.getInputCollection());
     }
 
     public Double calculate(Target target, Input input) {
@@ -29,42 +29,46 @@ public class Calculator {
     }
 
     public Double calculateDeviation(Target target) {
-        Double[] deviations = new Double[Indicator.FIELDS_COUNT - 1]; // @tood -1 is hack
+        Double[] deviations = new Double[Indicator.FIELDS_COUNT];
 
         deviations[0] = Math.pow(
-                Math.abs(
+                this.inputCollection.getNormalizedRoughness(
+                        target.getInputCollection().getAverageIndicator().getRoughness())
+                        -
                         this.inputCollection.getNormalizedRoughness(
-                                target.getInputCollection().getAverageIndicator().getRoughness())
-                                -
-                                this.inputCollection.getNormalizedRoughness(
-                                        this.targetCollection.getAverageIndicator().getRoughness())),
+                                this.targetCollection.getAverageIndicator().getRoughness()),
                 2);
 
         deviations[1] = Math.pow(
-                Math.abs(
+                this.inputCollection.getNormalizedCost(
+                        target.getInputCollection().getAverageIndicator().getCost())
+                        -
                         this.inputCollection.getNormalizedCost(
-                                target.getInputCollection().getAverageIndicator().getCost())
-                                -
-                                this.inputCollection.getNormalizedCost(
-                                        this.targetCollection.getAverageIndicator().getCost())),
+                                this.targetCollection.getAverageIndicator().getCost()),
                 2);
 
         deviations[2] = Math.pow(
-                Math.abs(
+                this.inputCollection.getNormalizedPeople(
+                        target.getInputCollection().getAverageIndicator().getPeople())
+                        -
                         this.inputCollection.getNormalizedPeople(
-                                target.getInputCollection().getAverageIndicator().getPeople())
-                                -
-                                this.inputCollection.getNormalizedPeople(
-                                        this.targetCollection.getAverageIndicator().getPeople())),
+                                this.targetCollection.getAverageIndicator().getPeople()),
                 2);
 
         deviations[3] = Math.pow(
-                Math.abs(
+                this.inputCollection.getNormalizedTime(
+                        target.getInputCollection().getAverageIndicator().getTime())
+                        -
                         this.inputCollection.getNormalizedTime(
-                                target.getInputCollection().getAverageIndicator().getTime())
-                                -
-                                this.inputCollection.getNormalizedTime(
-                                        this.targetCollection.getAverageIndicator().getTime())),
+                                this.targetCollection.getAverageIndicator().getTime()),
+                2);
+
+        deviations[4] = Math.pow(
+                this.inputCollection.getNormalizedSpecial(
+                        target.getInputCollection().getSpecialCount())
+                        -
+                        this.inputCollection.getNormalizedSpecial(
+                                this.targetCollection.getInputCollection().getSpecialCount()),
                 2);
 
         return DoubleArray.getSum(deviations);

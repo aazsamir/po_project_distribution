@@ -1,7 +1,11 @@
 package com.Distribution.Target;
 
+import java.util.Vector;
+
 import com.Distribution.Indicator.Indicator;
 import com.Distribution.Indicator.IndicatorCollection;
+import com.Distribution.Input.Input;
+import com.Distribution.Input.InputCollection;
 
 public class TargetCollection {
     private Target[] targets;
@@ -30,6 +34,24 @@ public class TargetCollection {
         }
 
         return new IndicatorCollection(indicators).getAverageIndicator();
+    }
+
+    public InputCollection getInputCollection() {
+        Vector<Input> vectorInputs = new Vector<Input>();
+
+        for (Target target : this.targets) {
+            for (Input input : target.getInputCollection().getInputs()) {
+                vectorInputs.add(input);
+            }
+        }
+
+        Input[] inputs = new Input[vectorInputs.size()];
+
+        for (int i = 0; i < vectorInputs.size(); i++) {
+            inputs[i] = vectorInputs.elementAt(i);
+        }
+
+        return new InputCollection(inputs);
     }
 
     public String toString() {

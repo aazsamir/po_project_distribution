@@ -14,6 +14,9 @@ import com.Distribution.Target.TargetCollection;
 public class Repository {
     private Database database;
     private Faker faker;
+    private final int TARGET_COUNT = 3;
+    private Integer idIteration = null;
+    private final int lastIterations = 10;
 
     public Repository(
             Database database) {
@@ -49,6 +52,7 @@ public class Repository {
                     CREATE TABLE inputs (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         id_target INTEGER,
+                        id_iteration INTEGER,
                         roughness DOUBLE,
                         time DOUBLE,
                         cost DOUBLE,
@@ -62,10 +66,20 @@ public class Repository {
     }
 
     private void seed() throws SQLException {
-        TargetCollection targetCollection = this.faker.mockTestTargetCollection(2);
+        TargetCollection targetCollection = this.faker.mockTestTargetCollection(TARGET_COUNT);
         Target[] targets = targetCollection.getTargets();
 
         for (Target target : targets) {
+            this.updateTarget(target);
+
+            for (Input input : target.getInputCollection().getInputs()) {
+                this.updateInput(input);
+            }
+        }
+    }
+
+    public void updateTargetCollectionWithInputs(TargetCollection targetCollection) throws SQLException {
+        for (Target target : targetCollection.getTargets()) {
             this.updateTarget(target);
 
             for (Input input : target.getInputCollection().getInputs()) {
@@ -127,12 +141,14 @@ public class Repository {
                     """
                                         INSERT INTO inputs (
                                             id_target,
+                                            id_iteration,
                                             roughness,
                                             time,
                                             cost,
                                             people,
                                             is_special
                                         ) VALUES (
+                                            %d,
                                             %d,
                                             %f,
                                             %f,
@@ -142,12 +158,34 @@ public class Repository {
                                         )
                             """,
                     input.getIdTarget(),
+                    this.getIdIteration(),
                     input.getIndicator().getRoughness(),
                     input.getIndicator().getTime(),
                     input.getIndicator().getCost(),
                     input.getIndicator().getPeople(),
                     input.getIndicator().isSpecial() ? 1 : 0));
         }
+    }
+
+    private Integer getIdIteration() throws SQLException {
+        if (this.idIteration == null) {
+            ResultSet result = this.database.select("""
+                    SELECT
+                        MAX(id_iteration) AS max
+                    FROM
+                        inputs
+                    """);
+
+            this.idIteration = 0;
+
+            while (result.next()) {
+                this.idIteration = result.getInt("max");
+            }
+
+            this.idIteration += 1;
+        }
+
+        return this.idIteration;
     }
 
     public TargetCollection findTargets() throws SQLException {
@@ -157,6 +195,8 @@ public class Repository {
                         name
                     FROM
                         targets
+                    ORDER BY
+                        random()
                 """);
 
         Vector<Target> vectorTargets = new Vector<Target>();
@@ -195,8 +235,9 @@ public class Repository {
                                 inputs
                             WHERE
                                 id_target = %d
+                                AND id_iteration >= %d
                         """,
-                idTarget));
+                idTarget, this.getLastConsideredIdIteration()));
 
         Vector<Input> inputsVector = new Vector<Input>();
         Indicator tempIndicator;
@@ -222,6 +263,28 @@ public class Repository {
         }
 
         return new InputCollection(inputs);
+    }
+
+    private int getLastConsideredIdIteration() throws SQLException {
+        ResultSet result = this.database.select(String.format("""
+                    SELECT
+                        id_iteration
+                    FROM
+                        inputs
+                    ORDER BY
+                        id_iteration DESC
+                    LIMIT
+                        %d
+                """,
+                this.lastIterations));
+
+        int lastIteration = 0;
+
+        while (result.next()) {
+            lastIteration = result.getInt("id_iteration");
+        }
+
+        return lastIteration;
     }
 
     public void close() throws SQLException {

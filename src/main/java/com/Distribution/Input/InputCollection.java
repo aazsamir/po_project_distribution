@@ -25,6 +25,21 @@ public class InputCollection {
         return new InputCollection(inputs);
     }
 
+    public static InputCollection merge(InputCollection coll1, InputCollection coll2) {
+        Input[] inputs = new Input[coll1.getSize() + coll2.getSize()];
+
+        int i = 0;
+        for (Input input : coll1.getInputs()) {
+            inputs[i++] = input;
+        }
+
+        for (Input input : coll2.getInputs()) {
+            inputs[i++] = input;
+        }
+
+        return new InputCollection(inputs);
+    }
+
     public InputCollection filterByTargetId(Integer idTarget) {
         Input[] inputs = new Input[getSize()];
         int i = 0;
@@ -105,8 +120,22 @@ public class InputCollection {
         return this.getNormalizedValue(value, (indicator) -> indicator.getPeople());
     }
 
-    public Double getNormalizedSpecial(Double value) {
-        return this.getNormalizedValue(value, (indicator) -> indicator.isSpecial() ? 1.0 : 0.0);
+    public Double getNormalizedSpecial(Double specialCount) {
+        Double allSpecialCount = this.getSpecialCount();
+
+        return allSpecialCount > 0 ? specialCount / this.getSpecialCount() : 0.0;
+    }
+
+    public Double getSpecialCount() {
+        int count = 0;
+
+        for (Input input : this.inputs) {
+            if (input.getIndicator().isSpecial()) {
+                count++;
+            }
+        }
+
+        return Double.valueOf(count);
     }
 
     private Double getNormalizedValue(Double value, Function<Indicator, Double> callback) {

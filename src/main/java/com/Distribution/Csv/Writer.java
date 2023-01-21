@@ -13,8 +13,8 @@ public class Writer {
 
     private static final char SEPARATOR = ';';
 
-    public Writer() {
-        this.filename = "output.csv";
+    public Writer(String filename) {
+        this.filename = filename;
     }
 
     public void writeToFile(TargetCollection targetCollection) throws IOException {

@@ -18,8 +18,8 @@ public class Reader {
     private static final int PEOPLE_INDEX = 3;
     private static final int SPECIAL_INDEX = 4;
 
-    public Reader() {
-        this.filename = "source.csv";
+    public Reader(String filename) {
+        this.filename = filename;
     }
 
     public IndicatorCollection readIndicatorsCsv() throws FileNotFoundException {
