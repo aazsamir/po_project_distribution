@@ -47,7 +47,7 @@ public class App {
     }
 
     private static Repository initRepository() throws SQLException {
-        Repository repository = new Repository(new Database(IS_DEBUG));
+        Repository repository = new Repository(new Database("sample.db", IS_DEBUG));
 
         if (FORCE_MIGRATE) {
             repository.migrate();

@@ -12,12 +12,12 @@ public class Database {
     private final int TIMEOUT = 30;
     private boolean isDebug = false;
 
-    public Database() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+    public Database(String database) throws SQLException {
+        connection = DriverManager.getConnection("jdbc:sqlite:" + database);
     }
 
-    public Database(boolean isDebug) throws SQLException {
-        this();
+    public Database(String database, boolean isDebug) throws SQLException {
+        this(database);
         this.isDebug = isDebug;
     }
 

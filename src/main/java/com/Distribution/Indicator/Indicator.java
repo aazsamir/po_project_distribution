@@ -1,20 +1,6 @@
 package com.Distribution.Indicator;
 
-import com.Distribution.Utils.Clamp;
-
 public class Indicator {
-    private final static Double MIN_ROUGHNESS = 0.0;
-    private final static Double MAX_ROUGHNESS = 1.0;
-
-    private final static Double MIN_TIME = 0.0;
-    private final static Double MAX_TIME = 1.0;
-
-    private final static Double MIN_COST = 0.0;
-    private final static Double MAX_COST = 1.0;
-
-    private final static Double MIN_PEOPLE = 0.0;
-    private final static Double MAX_PEOPLE = 1.0;
-
     public final static int FIELDS_COUNT = 5;
 
     private Double roughness;
@@ -44,8 +30,6 @@ public class Indicator {
     }
 
     public void setRoughness(Double roughness) {
-        // roughness = Clamp.clamp(roughness, MIN_ROUGHNESS, MAX_ROUGHNESS);
-
         this.roughness = roughness;
     }
 
@@ -54,8 +38,6 @@ public class Indicator {
     }
 
     public void setTime(Double time) {
-        // time = Clamp.clamp(time, MIN_TIME, MAX_TIME);
-
         this.time = time;
     }
 
@@ -64,8 +46,6 @@ public class Indicator {
     }
 
     public void setCost(Double cost) {
-        // cost = Clamp.clamp(cost, MIN_COST, MAX_COST);
-
         this.cost = cost;
     }
 
@@ -74,8 +54,6 @@ public class Indicator {
     }
 
     public void setPeople(Double people) {
-        // people = Clamp.clamp(people, MIN_PEOPLE, MAX_PEOPLE);
-
         this.people = people;
     }
 
@@ -88,7 +66,8 @@ public class Indicator {
     }
 
     public String toString() {
-        return "{\"roughness\": " + this.getRoughness() + ", \"time\": " + this.getTime() + ", \"cost\": " + this.getCost()
+        return "{\"roughness\": " + this.getRoughness() + ", \"time\": " + this.getTime() + ", \"cost\": "
+                + this.getCost()
                 + ", \"people\": " + this.getPeople() + ", \"isSpecial\": " + this.isSpecial() + "}";
     }
 }
