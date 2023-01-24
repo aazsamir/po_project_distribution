@@ -17,6 +17,10 @@ public class Faker {
         return new TargetCollection(targets);
     }
 
+    public InputCollection mockTestInputCollection(int count) {
+        return mockTestInputCollection(count, null);
+    }
+
     public InputCollection mockTestInputCollection(int count, Integer idTarget) {
         Input[] inputs = new Input[count];
 

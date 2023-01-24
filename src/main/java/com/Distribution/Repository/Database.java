@@ -16,6 +16,11 @@ public class Database {
         connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
     }
 
+    public Database(boolean isDebug) throws SQLException {
+        this();
+        this.isDebug = isDebug;
+    }
+
     public void query(String query) throws SQLException {
         if (this.isDebug) {
             System.out.println("======");

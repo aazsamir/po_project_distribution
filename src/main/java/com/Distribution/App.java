@@ -1,5 +1,6 @@
 package com.Distribution;
 
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
 import com.Distribution.Csv.Reader;
@@ -11,29 +12,25 @@ import com.Distribution.Repository.Repository;
 import com.Distribution.Target.TargetCollection;
 
 public class App {
+    private static final boolean FAKER_DATA = false;
+    private static final boolean FORCE_MIGRATE = false;
+    private static final boolean IS_DEBUG = false;
+
+    private static String inputCsv = "input.csv";
+    private static String outputCsv = "output.csv";
+
     public static void main(String[] args) {
         try {
-            // repository init
-            Repository repository = createRepository();
-            repository.migrateIfEmpty();
-
-            // distribution init
-            String inputCsv = "input.csv";
-            String outputCsv = "output.csv";
+            Repository repository = initRepository();
+            InputCollection inputCollection = getInputCollection();
 
             TargetCollection targetCollection = repository.findTargets();
-            // InputCollection inputCollection = InputCollection
-                    // .makeFromIndicatorCollection(new Reader(inputCsv).readIndicatorsCsv());
-            InputCollection inputCollection = new Faker().mockTestInputCollection(10, null);
 
             Distribution distribution = new Distribution(
                     targetCollection,
                     inputCollection);
 
-            System.out.println("Before distribute:");
-            System.out.println(distribution.calcAverageDeviation());
             distribution.distribute();
-            System.out.println("After distribute:");
             System.out.println(distribution.calcAverageDeviation());
 
             repository.updateTargetCollectionWithInputs(targetCollection);
@@ -49,7 +46,28 @@ public class App {
         }
     }
 
-    private static Repository createRepository() throws SQLException {
-        return new Repository(new Database());
+    private static Repository initRepository() throws SQLException {
+        Repository repository = new Repository(new Database(IS_DEBUG));
+
+        if (FORCE_MIGRATE) {
+            repository.migrate();
+        } else {
+            repository.migrateIfEmpty();
+        }
+
+        return repository;
+    }
+
+    private static InputCollection getInputCollection() throws FileNotFoundException {
+        InputCollection inputCollection;
+
+        if (FAKER_DATA) {
+            inputCollection = new Faker().mockTestInputCollection(100);
+        } else {
+            inputCollection = InputCollection
+                    .makeFromIndicatorCollection(new Reader(inputCsv).readIndicatorsCsv());
+        }
+
+        return inputCollection;
     }
 }

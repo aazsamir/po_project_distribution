@@ -14,7 +14,7 @@ import com.Distribution.Target.TargetCollection;
 public class Repository {
     private Database database;
     private Faker faker;
-    private final int TARGET_COUNT = 3;
+    private final int TARGET_COUNT = 8;
     private Integer idIteration = null;
     private final int lastIterations = 10;
 
